@@ -130,7 +130,13 @@
   <div id="container">
     <video id="video" autoplay playsinline muted></video>
     <canvas id="overlay"></canvas>
-    <div id="status">Loading camera &amp; model…</div>
+    <div class="hud" aria-live="polite">
+      <div id="status" role="status">Loading hand tracker…</div>
+      <div id="controls" class="controls" aria-label="Camera controls">
+        <button id="camera-toggle" type="button" disabled>Start camera</button>
+        <button id="retry-button" type="button" hidden>Retry</button>
+      </div>
+    </div>
   </div>
 
   <!-- SEO: noscript fallback content for crawlers -->
