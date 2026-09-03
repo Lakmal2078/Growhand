@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Primary Meta Tags -->
+  <title>Glowing Hand Tracker — Real-Time Webcam Hand Tracking with Neon Effects</title>
+  <meta name="title" content="Glowing Hand Tracker — Real-Time Webcam Hand Tracking with Neon Effects" />
+  <meta name="description" content="Free real-time hand tracking web app. Turn on your webcam and watch your hands light up with glowing neon skeleton overlays powered by Google MediaPipe. No download, no sign-up — runs entirely in your browser." />
+  <meta name="keywords" content="hand tracking, mediapipe hands, webcam hand tracking, real-time hand detection, neon hand effects, gesture recognition, computer vision, augmented reality hands, browser hand tracking" />
+  <meta name="author" content="Glowing Hand Tracker" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://glowing-hand-tracker.app/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://glowing-hand-tracker.app/" />
+  <meta property="og:title" content="Glowing Hand Tracker — Real-Time Webcam Hand Tracking" />
+  <meta property="og:description" content="Turn on your webcam and watch your hands light up with glowing neon skeleton overlays. Free, no download, runs entirely in your browser using Google MediaPipe." />
+  <meta property="og:image" content="https://glowing-hand-tracker.app/og-image.png" />
+  <meta property="og:site_name" content="Glowing Hand Tracker" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Glowing Hand Tracker — Real-Time Webcam Hand Tracking" />
+  <meta name="twitter:description" content="Turn on your webcam and watch your hands light up with glowing neon skeleton overlays. Free, no download, runs in your browser." />
+  <meta name="twitter:image" content="https://glowing-hand-tracker.app/og-image.png" />
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#05050a" />
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Glowing Hand Tracker",
+    "url": "https://glowing-hand-tracker.app/",
+    "description": "Real-time hand tracking webcam app with glowing neon visual effects powered by Google MediaPipe Hands. Tracks up to two hands simultaneously with 21 landmarks per hand.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires webcam access and a modern browser with WebGL support.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Real-time hand tracking up to 2 hands",
+      "21 landmarks per hand",
+      "Glowing neon skeleton overlay",
+      "Particle effects on fingertips",
+      "Left and right hand color coding",
+      "No download or sign-up required",
+      "Runs entirely in the browser"
+    ],
+    "softwareVersion": "1.0.0",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the Glowing Hand Tracker?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Glowing Hand Tracker is a free web app that uses your webcam and Google MediaPipe Hands to track your hands in real time, overlaying a glowing neon skeleton on each hand with 21 tracked landmarks per hand."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to download or install anything to use the hand tracker?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The Glowing Hand Tracker runs entirely in your browser. You only need a webcam and a modern browser with WebGL support. There is no download, installation, or sign-up required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many hands can the tracker detect at once?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The tracker can detect and track up to 2 hands simultaneously. Each hand is color-coded — cyan for the left hand and magenta for the right hand — with 21 landmarks per hand."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my webcam video sent to a server?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. All hand tracking and visual processing happens locally in your browser using Google MediaPipe. Your webcam video never leaves your device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What technology does the Glowing Hand Tracker use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The app uses Google MediaPipe Hands for real-time hand landmark detection, the HTML5 Canvas API for rendering glowing neon overlays and particle effects, and the browser's getUserMedia API for webcam access."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Preconnect to CDN for faster MediaPipe load -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+  <style>
+    :root { color-scheme: dark; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #05050a;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="overlay"></canvas>
+    <div id="status">Loading camera &amp; model…</div>
+  </div>
+
+  <!-- SEO: noscript fallback content for crawlers -->
+  <noscript>
+    <div style="padding: 40px; color: #d7f8ff; max-width: 600px; margin: 0 auto; text-align: center;">
+      <h1>Glowing Hand Tracker — Real-Time Webcam Hand Tracking</h1>
+      <p>The Glowing Hand Tracker is a free web app that uses your webcam and Google MediaPipe Hands to track your hands in real time, overlaying a glowing neon skeleton on each hand with 21 tracked landmarks per hand.</p>
+      <p>This application requires JavaScript and webcam access to function. Please enable JavaScript in your browser to use the hand tracker.</p>
+      <h2>Features</h2>
+      <ul style="text-align: left; display: inline-block;">
+        <li>Real-time hand tracking for up to 2 hands</li>
+        <li>21 landmarks per hand with glowing neon overlay</li>
+        <li>Particle effects on fingertips</li>
+        <li>Left and right hand color coding (cyan and magenta)</li>
+        <li>No download or sign-up — runs entirely in your browser</li>
+        <li>All processing happens locally; your video never leaves your device</li>
+      </ul>
+    </div>
+  </noscript>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
