@@ -249,7 +249,7 @@ function friendlyCameraError(error) {
   if (!window.isSecureContext) return 'Camera access requires HTTPS or localhost. Open http://localhost:5173 in Chrome and retry.';
   if (!navigator.mediaDevices?.getUserMedia) return 'This browser does not support camera access. Use the latest Chrome and retry.';
   if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') {
-    return 'Camera permission was denied or blocked for this site. In Chrome, select the lock icon → Site settings → Camera → Allow, then retry.';
+    return 'Camera permission was denied or blocked. In Chrome, set Site settings → Camera → Allow; on Android also check Settings → Apps → Chrome → Permissions → Camera, then retry.';
   }
   if (error?.name === 'NotFoundError') return 'No camera was found. Connect a camera and retry.';
   if (error?.name === 'NotReadableError') return 'The camera is busy in another app. Close it and retry.';
@@ -349,7 +349,8 @@ async function startCamera() {
     videoEl.srcObject = null;
     cameraActive = false;
     retryButton.hidden = false;
-    setStatus(friendlyCameraError(error), true);
+    const errorName = error?.name ? ` [${error.name}]` : '';
+    setStatus(`${friendlyCameraError(error)}${errorName}`, true);
     console.error(error);
   } finally {
     cameraToggle.disabled = false;
