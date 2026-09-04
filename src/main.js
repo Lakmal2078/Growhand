@@ -37,6 +37,43 @@ themeToggle?.addEventListener('click', () => {
   try { localStorage.setItem('growhand-theme', nextTheme); } catch { /* Storage can be disabled in private browsing. */ }
 });
 
+const previewCanvas = document.getElementById('preview-canvas');
+const previewToggle = document.getElementById('preview-toggle');
+const previewStatus = document.getElementById('preview-status');
+let previewPaused = false;
+
+function drawPreview(timestamp = 0) {
+  if (!previewCanvas) return;
+  const rect = previewCanvas.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  previewCanvas.width = Math.round(rect.width * dpr);
+  previewCanvas.height = Math.round(rect.height * dpr);
+  const previewCtx = previewCanvas.getContext('2d');
+  previewCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  previewCtx.clearRect(0, 0, rect.width, rect.height);
+  const scale = Math.min(rect.width, rect.height) * 0.36;
+  const cx = rect.width * 0.52 + Math.sin(timestamp * 0.0012) * rect.width * 0.025;
+  const cy = rect.height * 0.52;
+  const landmarks = [[0, .28], [-.24, .12], [-.38, -.08], [-.48, -.34], [-.54, -.57], [-.43, -.67], [-.32, -.39], [-.17, -.68], [-.06, -.9], [.05, -1.02], [.15, -.96], [.12, -.67], [.3, -.83], [.42, -.91], [.51, -.82], [.46, -.59], [.32, -.45], [.42, -.51], [.55, -.55], [.63, -.45], [.6, -.25]].map(([x, y], i) => ({ x: cx + x * scale, y: cy + y * scale + Math.sin(timestamp * .002 + i) * 2.5 }));
+  const connections = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [8, 9], [0, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [0, 17], [17, 18], [18, 19], [19, 20], [0, 5]];
+  previewCtx.globalCompositeOperation = 'lighter';
+  connections.forEach(([a, b], index) => {
+    previewCtx.beginPath(); previewCtx.moveTo(landmarks[a].x, landmarks[a].y); previewCtx.lineTo(landmarks[b].x, landmarks[b].y);
+    previewCtx.strokeStyle = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowColor = '#00e5ff'; previewCtx.shadowBlur = 12; previewCtx.lineWidth = 2.2; previewCtx.stroke();
+  });
+  landmarks.forEach((point, index) => { previewCtx.beginPath(); previewCtx.fillStyle = '#f6ffff'; previewCtx.shadowColor = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowBlur = 14; previewCtx.arc(point.x, point.y, index % 4 === 0 ? 4 : 2.7, 0, Math.PI * 2); previewCtx.fill(); });
+  if (!previewPaused) requestAnimationFrame(drawPreview);
+}
+
+if (previewCanvas) requestAnimationFrame(drawPreview);
+previewToggle?.addEventListener('click', () => {
+  previewPaused = !previewPaused;
+  previewToggle.setAttribute('aria-pressed', String(!previewPaused));
+  previewToggle.setAttribute('aria-label', `${previewPaused ? 'Play' : 'Pause'} Camera Studio preview`);
+  if (previewStatus) previewStatus.textContent = previewPaused ? 'PREVIEW PAUSED · TAP TO PLAY' : 'LIVE PREVIEW · TAP TO PAUSE';
+  if (!previewPaused) requestAnimationFrame(drawPreview);
+});
+
 function renderProfile() {
   document.querySelectorAll('[data-profile="name"]').forEach((element) => { element.textContent = profile.name; });
   document.querySelectorAll('[data-profile="bio"]').forEach((element) => { element.textContent = profile.bio; });

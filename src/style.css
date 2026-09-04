@@ -89,6 +89,14 @@ h1 span { color: transparent; background: linear-gradient(100deg, #a9ff56 8%, #0
 .camera-intro-mark { color: #a9ff56; font-size: 1rem; line-height: 1.25; }
 .camera-intro strong { color: #cfe3e4; display: block; font-size: 0.72rem; letter-spacing: 0.02em; }
 .camera-intro p { color: #81969d; font-size: 0.68rem; line-height: 1.65; margin: 0.3rem 0 0; }
+.studio-preview { background: linear-gradient(145deg, rgba(8, 25, 35, 0.82), rgba(10, 12, 27, 0.9)); border: 1px solid rgba(0, 229, 255, 0.28); border-radius: 18px; cursor: pointer; display: block; height: 155px; margin-top: 1rem; max-width: 590px; overflow: hidden; padding: 0; position: relative; text-align: left; width: 100%; }
+.studio-preview:hover { border-color: rgba(169, 255, 86, 0.72); box-shadow: 0 0 32px rgba(0, 229, 255, 0.13); }
+#preview-canvas { display: block; height: 100%; width: 100%; }
+.preview-scanline { background: linear-gradient(90deg, transparent, rgba(169, 255, 86, 0.32), transparent); height: 1px; left: 0; position: absolute; right: 0; top: 50%; animation: preview-scan 3.6s ease-in-out infinite; }
+.preview-label, .preview-hint { color: #a9ff56; font-family: 'DM Mono', monospace; font-size: 0.56rem; left: 0.8rem; letter-spacing: 0.08em; position: absolute; top: 0.7rem; }
+.preview-live-dot { background: #a9ff56; border-radius: 50%; box-shadow: 0 0 12px #a9ff56; display: inline-block; height: 6px; margin-right: 0.4rem; width: 6px; }
+.preview-hint { bottom: 0.7rem; color: #7f969d; left: auto; right: 0.8rem; top: auto; }
+@keyframes preview-scan { 0%, 100% { opacity: 0.15; transform: translateY(-55px); } 50% { opacity: 0.7; transform: translateY(55px); } }
 
 .profile-card { background: linear-gradient(145deg, rgba(20, 36, 44, 0.82), rgba(8, 15, 22, 0.92)); border: 1px solid rgba(169, 255, 86, 0.34); border-radius: 24px; box-shadow: 0 25px 90px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.08), 0 0 55px rgba(0, 229, 255, 0.07); overflow: hidden; padding: 1.25rem; position: relative; transform: rotate(2.5deg); }
 .profile-card::before { background: linear-gradient(90deg, transparent, rgba(169, 255, 86, 0.75), transparent); content: ''; height: 1px; left: 13%; position: absolute; right: 13%; top: 0; }
@@ -199,6 +207,8 @@ html[data-theme='light'] .hero-lede strong, html[data-theme='light'] .profile-ca
 html[data-theme='light'] .camera-intro { background: rgba(255, 255, 255, 0.68); }
 html[data-theme='light'] .camera-intro strong { color: #183f47; }
 html[data-theme='light'] .camera-intro p { color: #567078; }
+html[data-theme='light'] .studio-preview { background: linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(222, 241, 238, 0.92)); border-color: rgba(0, 142, 157, 0.32); }
+html[data-theme='light'] .preview-hint { color: #5a7479; }
 html[data-theme='light'] .hero-lede, html[data-theme='light'] .section-heading p, html[data-theme='light'] .contact-copy p { color: #526b72; }
 html[data-theme='light'] .hero-sinhala, html[data-theme='light'] .landing-status { color: #627b80; }
 html[data-theme='light'] .top-links a, html[data-theme='light'] .profile-card-top, html[data-theme='light'] .profile-footer { color: #587176; }

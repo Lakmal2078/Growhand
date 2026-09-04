@@ -73,3 +73,12 @@ test('dark and light themes are user-selectable and persisted', () => {
   assert.match(source, /aria-pressed/);
   assert.match(source, /dataset\.theme/);
 });
+
+test('Camera Studio preview is interactive and GitHub is in contact links', () => {
+  assert.match(html, /id="preview-toggle"/);
+  assert.match(html, /id="preview-canvas"/);
+  assert.match(source, /requestAnimationFrame\(drawPreview\)/);
+  assert.match(source, /PREVIEW PAUSED/);
+  assert.match(html, /href="https:\/\/github\.com\/Lakmal2078"[^>]*>GitHub/);
+  assert.doesNotMatch(html.match(/<nav[\s\S]*?<\/nav>/)?.[0] || '', /GitHub|Portfolio/);
+});
