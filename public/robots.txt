@@ -23,4 +23,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://glowing-hand-tracker.app/sitemap.xml
+Sitemap: https://lakmal2078-inclusive-eyes.agent-1xfast-srilanka.workers.dev/sitemap.xml
