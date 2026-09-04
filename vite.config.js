@@ -1,17 +1,20 @@
 import { defineConfig } from 'vite';
 
-const cameraHeaders = {
-  'Permissions-Policy': 'camera=(self)'
+const securityHeaders = {
+  'Permissions-Policy': 'camera=(self)',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN'
 };
 
 export default defineConfig({
   server: {
     port: 5173,
     host: true,
-    headers: cameraHeaders
+    headers: securityHeaders
   },
   preview: {
-    headers: cameraHeaders
+    headers: securityHeaders
   },
   build: {
     outDir: 'dist',
