@@ -3,21 +3,28 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const source = await readFile(new URL('../src/main.js', import.meta.url), 'utf8');
+const camera = await readFile(new URL('../src/camera/camera.js', import.meta.url), 'utf8');
+const permissions = await readFile(new URL('../src/camera/permissions.js', import.meta.url), 'utf8');
+const performance = await readFile(new URL('../src/config/performance.js', import.meta.url), 'utf8');
+const smoothing = await readFile(new URL('../src/tracking/smoothing.js', import.meta.url), 'utf8');
+const mediaPipe = await readFile(new URL('../src/tracking/mediapipe.js', import.meta.url), 'utf8');
+const effects = await readFile(new URL('../src/rendering/effects.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const profileData = await readFile(new URL('../src/profile-data.js', import.meta.url), 'utf8');
 const syncScript = await readFile(new URL('../scripts/sync-profile.mjs', import.meta.url), 'utf8');
 const syncWorkflow = await readFile(new URL('../.github/workflows/sync-profile.yml', import.meta.url), 'utf8');
 
-test('camera lifecycle controls are wired', () => {
-  assert.match(source, /import ['"]\.\/style\.css['"]/);
-  assert.match(source, /getUserMedia/);
-  assert.match(source, /window\.isSecureContext/);
-  assert.match(source, /waitForVideoMetadata/);
-  assert.match(source, /OverconstrainedError/);
-  assert.match(source, /cameraActive \? stopCamera\(\) : startCamera\(\)/);
+ test('runtime is modular and camera lifecycle is wired', () => {
+  assert.match(source, /style\.css/);
+  assert.match(source, /createCameraController/);
+  assert.match(source, /createLandmarkSmoother/);
+  assert.match(source, /createEffectsRenderer/);
+  assert.match(camera, /getUserMedia/);
+  assert.match(camera, /waitForVideoMetadata/);
+  assert.match(camera, /OverconstrainedError/);
+  assert.match(camera, /hands\.send\(\{ image: videoEl \}\)/);
+  assert.match(camera, /requestAnimationFrame\(processVideoFrame\)/);
   assert.match(source, /beforeunload/);
-  assert.match(source, /hands\.send\(\{ image: videoEl \}\)/);
-  assert.match(source, /requestAnimationFrame\(processVideoFrame\)/);
   assert.match(html, /id="camera-toggle"/);
   assert.match(html, /id="camera-launch"/);
   assert.match(html, /Lakmal Vidana Gamage/);
@@ -25,29 +32,39 @@ test('camera lifecycle controls are wired', () => {
   assert.match(html, /id="retry-button"/);
 });
 
-test('rainbow rendering and motion trails are wired', () => {
-  assert.match(source, /rainbowColor/);
-  assert.match(source, /createLinearGradient/);
-  assert.match(source, /drawMotionTrails/);
-  assert.match(source, /trailLength: 7/);
-  assert.match(source, /trailLength: 5/);
-  assert.match(source, /trailLength: 2/);
+test('camera permissions provide secure-context and recovery guidance', () => {
+  assert.match(permissions, /permission was denied or blocked/);
+  assert.match(permissions, /Camera access requires HTTPS or localhost/);
+  assert.match(permissions, /No camera was found/);
+  assert.match(permissions, /Site settings/);
+  assert.match(source, /friendlyCameraError/);
 });
 
-test('particle growth is bounded', () => {
-  assert.match(source, /particleLimit: 240/);
-  assert.match(source, /particleLimit: 24/);
-  assert.match(source, /processInterval: 1000 \/ 12/);
-  assert.match(source, /particles\.length >= MAX_PARTICLES/);
-  assert.match(source, /particles\.splice/);
+test('tracking smoothing is isolated', () => {
+  assert.match(smoothing, /createLandmarkSmoother/);
+  assert.match(smoothing, /alpha = 0\.36/);
+  assert.match(smoothing, /smoothedHands/);
 });
 
-test('camera errors have user-facing recovery guidance', () => {
-  assert.match(source, /permission was denied or blocked/);
-  assert.match(source, /Camera access requires HTTPS or localhost/);
-  assert.match(source, /No camera was found/);
-  assert.match(source, /Site settings/);
-  assert.match(source, /retry-button/);
+test('rainbow rendering, trails and particles are isolated and bounded', () => {
+  assert.match(effects, /rainbowColor/);
+  assert.match(effects, /createLinearGradient/);
+  assert.match(effects, /drawMotionTrails/);
+  assert.match(performance, /trailLength: 7/);
+  assert.match(performance, /trailLength: 5/);
+  assert.match(performance, /trailLength: 2/);
+  assert.match(performance, /particleLimit: 240/);
+  assert.match(performance, /particleLimit: 24/);
+  assert.match(performance, /processInterval: 1000 \/ 12/);
+  assert.match(effects, /particles\.length >= MAX_PARTICLES/);
+  assert.match(effects, /particles\.splice/);
+});
+
+test('MediaPipe loader is isolated from the app orchestrator', () => {
+  assert.match(mediaPipe, /camera_utils/);
+  assert.match(mediaPipe, /hands\.js/);
+  assert.match(mediaPipe, /loadHandTracker/);
+  assert.match(source, /loadHandTracker/);
 });
 
 test('development server allows same-origin camera access', async () => {
