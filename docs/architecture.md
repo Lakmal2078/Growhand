@@ -8,19 +8,27 @@ Growhand is a browser-first portfolio experience with an interactive MediaPipe h
 index.html
    |
    v
-src/main.js
+src/main.js (orchestrator)
    |
    +--> profile-data.js
-   +--> browser camera API
-   +--> MediaPipe Hands (CDN)
-   +--> canvas renderer
+   +--> config/performance.js
+   +--> camera/camera.js ----> camera/permissions.js
+   +--> tracking/mediapipe.js
+   +--> tracking/smoothing.js
+   +--> rendering/effects.js
    +--> UI / theme / contact interactions
 ```
 
-## Main responsibilities
+## Module responsibilities
 
 - `index.html` — semantic page structure, SEO metadata, Camera Studio markup, forms and navigation.
-- `src/main.js` — application orchestration, UI state, camera lifecycle, tracking, rendering and preview behavior.
+- `src/main.js` — application orchestration, profile rendering, UI state, preview behavior and dependency wiring.
+- `src/config/performance.js` — device-adaptive camera, rendering and tracking configuration.
+- `src/camera/camera.js` — camera stream lifecycle, video processing loop and recovery behavior.
+- `src/camera/permissions.js` — secure-context checks, user-facing camera errors and video metadata readiness.
+- `src/tracking/mediapipe.js` — MediaPipe browser asset loading and tracker initialization.
+- `src/tracking/smoothing.js` — landmark smoothing state, isolated from DOM and canvas concerns.
+- `src/rendering/effects.js` — rainbow skeleton, motion trails and bounded particle rendering.
 - `src/profile-data.js` — profile content synchronized from the maintainer's GitHub profile README.
 - `src/style.css` — responsive visual system and interaction states.
 - `scripts/` — repository automation such as profile synchronization and lightweight linting.
