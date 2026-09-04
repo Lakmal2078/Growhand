@@ -1,69 +1,130 @@
 # Growhand
 
-Growhand is a browser-based real-time hand tracker that uses Google MediaPipe Hands and the webcam to render a screenshot-inspired rainbow neon skeleton overlay, motion trails, and fingertip particle effects. Video processing stays in the browser; the application does not include a backend, database, account system, or upload pipeline.
+> A browser-first interactive portfolio experience with real-time MediaPipe hand tracking and a neon visual studio.
 
-## Requirements
+[![CI](https://github.com/Lakmal2078/Growhand/actions/workflows/ci.yml/badge.svg)](https://github.com/Lakmal2078/Growhand/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Use a modern browser with webcam support. Camera access is available only from a secure context such as HTTPS or `localhost`. The first visit prompts for camera permission. If permission is denied, use the **Retry** button after enabling camera access in the browser settings.
+Growhand combines a professional digital portfolio with an interactive Camera Studio. It uses Google MediaPipe Hands and the webcam to render a rainbow neon skeleton, motion trails, and fingertip particle effects. Camera processing is browser-first: the project does not require an application backend, database, account system, or camera-upload pipeline.
 
-## Local development
+## ✨ What it demonstrates
+
+- Real-time browser computer vision with MediaPipe Hands
+- Responsive canvas rendering with adaptive performance profiles
+- Camera permission, recovery, and lifecycle handling
+- Accessible controls, status feedback, and light/dark theme persistence
+- SEO/social metadata and structured data for portfolio presentation
+- GitHub profile content synchronization
+- Automated lint, test, build, and dependency-audit checks
+
+## 🚀 Local development
+
+### Requirements
+
+- Node.js 20+
+- A modern browser with camera support
+- `localhost` or HTTPS for camera access
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite, typically `http://localhost:5173`—do not use the network IP over plain HTTP because Chrome treats it as an insecure context. Select **Start camera** and allow webcam access. Select **Stop camera** to release the camera and clear the overlay. If the MediaPipe model or camera fails to load, resolve the network or permission issue and select **Retry**.
+Open the local Vite URL, typically `http://localhost:5173`, then select **Start camera** and allow camera access. **Stop camera** releases the active media tracks and clears the visual state.
 
-## GitHub profile sync
+## 🧪 Validation
 
-The public profile README at [Lakmal2078/Lakmal2078](https://github.com/Lakmal2078/Lakmal2078) is the source of truth for the landing-page profile copy. The `scripts/sync-profile.mjs` script fetches that README, extracts the supported profile sections, and writes the generated `src/profile-data.js` module. The frontend renders that module at build time, while the fallback values keep the page usable if the README is temporarily unavailable.
-
-GitHub Actions runs the sync once per day and can also be started manually from **Actions → Sync GitHub profile → Run workflow**. If the profile README changes, the action commits the generated data to this repository; the normal website deployment then rebuilds with the new details. To test or apply a sync locally, run `npm run sync:profile`, review `src/profile-data.js`, then run `npm run lint`, `npm test`, and `npm run build`.
-
-## Portfolio sections
-
-The landing page includes a services overview, a short Camera Studio explainer, and contact links for email, WhatsApp, and LinkedIn. The explainer tells visitors that camera frames stay in the browser while Growhand renders the real-time rainbow hand-tracking experience. Contact destinations live in `index.html`, making them straightforward to review and change.
-
-## Chrome camera troubleshooting
-
-The development and preview servers send `Permissions-Policy: camera=(self)` so the page can request its own camera. If Chrome previously blocked access, select the lock icon beside the address, open **Site settings**, set **Camera** to **Allow**, reload the page, and select **Retry**. For a deployed build, serve the site over HTTPS and preserve an equivalent camera permission policy at the hosting layer.
-
-## Available commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Vite development server. |
-| `npm run build` | Create the production bundle in `dist/`. |
-| `npm run preview` | Serve the production bundle locally. |
-| `npm run lint` | Run the repository’s dependency-free source and DOM contract checks. |
-| `npm test` | Run the Node test suite. |
-
-## Architecture
-
-The app has a deliberately small client-only architecture. `index.html` contains the semantic video, canvas, status, and control elements. `src/main.js` owns MediaPipe model loading, camera lifecycle management, landmark smoothing, canvas rendering, error recovery, and particle cleanup. `src/style.css` provides the responsive neon HUD and mobile layout. MediaPipe’s legacy browser scripts are loaded from jsDelivr at runtime.
-
-## Privacy
-
-The webcam stream is requested with `getUserMedia` and is rendered locally. Growhand does not send camera frames to an application server. Camera tracks are explicitly stopped when the user presses **Stop camera** or leaves the page. The third-party MediaPipe assets are fetched from jsDelivr so the model can load in the browser.
-
-## Production notes
-
-Deploy the generated `dist/` directory behind HTTPS. Keep the MediaPipe CDN available, or vendor the model assets if the deployment requires a self-contained build. The renderer uses animated rainbow gradients, short landmark motion trails, and bright fingertip particles to create the reference-inspired effect. The visual particle buffer is capped at 240 particles to prevent unbounded growth during long sessions. On touch devices, Growhand automatically switches to a mobile performance profile: 640–960px camera input, MediaPipe complexity 0, 18–24 tracking updates per second, lower canvas pixel density, shorter trails, fewer glow layers, and a smaller particle cap. This keeps the neon look while reducing heat, battery drain, and frame drops. Browser permission failures, missing cameras, busy cameras, insecure contexts, and model-load failures all produce recovery-oriented status messages.
-
-## Validation
-
-Before opening a pull request, run the following commands:
+Run the same checks used by CI:
 
 ```bash
 npm run lint
 npm test
 npm run build
-npm audit --omit=dev --audit-level=high
+npm audit --audit-level=high
 ```
 
-The automated tests validate the camera-control contract, retry/error guidance, bounded particle behavior, and presence of the rainbow/trail rendering pipeline. Hardware-dependent camera behavior should additionally be checked manually in a secure browser context.
+Hardware-dependent camera behavior should also be checked manually in a secure browser context.
 
-## License
+## 📦 Project structure
 
-MIT
+```text
+Growhand/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── workflows/
+│   │   ├── ci.yml
+│   │   └── sync-profile.yml
+│   └── pull_request_template.md
+├── docs/
+│   ├── architecture.md
+│   ├── deployment.md
+│   └── privacy.md
+├── public/
+│   ├── robots.txt
+│   └── sitemap.xml
+├── scripts/
+│   ├── lint.mjs
+│   └── sync-profile.mjs
+├── src/
+│   ├── main.js
+│   ├── profile-data.js
+│   └── style.css
+├── tests/
+│   └── app.test.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── LICENSE
+└── README.md
+```
+
+The runtime entry point is intentionally compact at the repository level, while `docs/architecture.md` records the current responsibilities and the path for future module extraction.
+
+## 🧠 Architecture
+
+`index.html` owns semantic structure, SEO metadata, Camera Studio markup, forms, and navigation. `src/main.js` orchestrates the client application, including profile rendering, preview animation, theme state, camera lifecycle, MediaPipe inference, landmark smoothing, canvas rendering, particles, and recovery behavior. `src/style.css` contains the responsive visual system. `src/profile-data.js` is generated profile content.
+
+See the detailed [architecture guide](docs/architecture.md), [deployment guide](docs/deployment.md), and [privacy guide](docs/privacy.md).
+
+## 🔄 GitHub profile sync
+
+The public profile README at [Lakmal2078/Lakmal2078](https://github.com/Lakmal2078/Lakmal2078) is the source of truth for supported landing-page profile content. `scripts/sync-profile.mjs` extracts those sections and generates `src/profile-data.js`.
+
+The existing GitHub Action runs the synchronization daily and can be triggered manually. To run it locally:
+
+```bash
+npm run sync:profile
+```
+
+Then review the generated data and run the validation suite.
+
+## 🔐 Privacy & security
+
+Camera access is requested only after the user starts Camera Studio. Camera frames are processed in the browser and are not sent to a Growhand application server. Stopping Camera Studio stops the active media tracks.
+
+MediaPipe browser assets are currently loaded from jsDelivr at runtime. A future hardening step may vendor or pin these assets locally for a more self-contained production deployment.
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and [docs/privacy.md](docs/privacy.md) for the application privacy model.
+
+## 🌍 Deployment
+
+Build the static production bundle with:
+
+```bash
+npm run build
+```
+
+Deploy `dist/` behind HTTPS. Preserve an equivalent `Permissions-Policy: camera=(self)` policy at the hosting layer so Camera Studio can request the user's camera.
+
+See [docs/deployment.md](docs/deployment.md) for the production checklist.
+
+## 🤝 Contributing
+
+Keep changes focused, preserve camera/privacy behavior, add regression coverage for behavior changes, and run the validation suite before opening a pull request. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE).
