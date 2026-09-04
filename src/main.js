@@ -43,6 +43,7 @@ const previewStatus = document.getElementById('preview-status');
 let previewPaused = false;
 let previewPointer = { x: 0, y: 0 };
 let previewSize = { width: 0, height: 0, dpr: 0 };
+let previewFilter = 'spectrum';
 
 function drawPreview(timestamp = 0) {
   if (!previewCanvas) return;
@@ -63,18 +64,28 @@ function drawPreview(timestamp = 0) {
   const landmarks = [[0, .28], [-.24, .12], [-.38, -.08], [-.48, -.34], [-.54, -.57], [-.43, -.67], [-.32, -.39], [-.17, -.68], [-.06, -.9], [.05, -1.02], [.15, -.96], [.12, -.67], [.3, -.83], [.42, -.91], [.51, -.82], [.46, -.59], [.32, -.45], [.42, -.51], [.55, -.55], [.63, -.45], [.6, -.25]].map(([x, y], i) => ({ x: cx + x * scale, y: cy + y * scale + Math.sin(timestamp * .002 + i) * 2.5 }));
   const connections = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [8, 9], [0, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [0, 17], [17, 18], [18, 19], [19, 20], [0, 5]];
   previewCtx.globalCompositeOperation = 'lighter';
+  if (previewFilter === 'pulse') {
+    previewCtx.beginPath(); previewCtx.arc(cx, cy, scale * (1.02 + Math.sin(timestamp * .004) * .12), 0, Math.PI * 2);
+    previewCtx.strokeStyle = 'rgba(169, 255, 86, 0.22)'; previewCtx.shadowColor = '#a9ff56'; previewCtx.shadowBlur = 20; previewCtx.lineWidth = 2; previewCtx.stroke();
+  }
+  if (previewFilter === 'matrix') {
+    previewCtx.globalAlpha = 0.2; previewCtx.strokeStyle = '#57ff9a'; previewCtx.lineWidth = 1;
+    for (let x = 16; x < rect.width; x += 24) { previewCtx.beginPath(); previewCtx.moveTo(x, 0); previewCtx.lineTo(x, rect.height); previewCtx.stroke(); }
+    previewCtx.globalAlpha = 1;
+  }
   connections.forEach(([a, b], index) => {
     previewCtx.beginPath(); previewCtx.moveTo(landmarks[a].x, landmarks[a].y); previewCtx.lineTo(landmarks[b].x, landmarks[b].y);
-    previewCtx.strokeStyle = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowColor = '#00e5ff'; previewCtx.shadowBlur = 12; previewCtx.lineWidth = 2.2; previewCtx.stroke();
+    const hue = previewFilter === 'matrix' ? 145 : previewFilter === 'pulse' ? 85 : (timestamp * .04 + index * 25) % 360;
+    previewCtx.strokeStyle = `hsl(${hue} 100% 65%)`; previewCtx.shadowColor = previewFilter === 'matrix' ? '#57ff9a' : '#00e5ff'; previewCtx.shadowBlur = previewFilter === 'pulse' ? 20 : 12; previewCtx.lineWidth = previewFilter === 'pulse' ? 3.2 : 2.2; previewCtx.stroke();
   });
-  landmarks.forEach((point, index) => { previewCtx.beginPath(); previewCtx.fillStyle = '#f6ffff'; previewCtx.shadowColor = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowBlur = 14; previewCtx.arc(point.x, point.y, index % 4 === 0 ? 4 : 2.7, 0, Math.PI * 2); previewCtx.fill(); });
+  landmarks.forEach((point, index) => { previewCtx.beginPath(); previewCtx.fillStyle = '#f6ffff'; previewCtx.shadowColor = `hsl(${previewFilter === 'matrix' ? 145 : previewFilter === 'pulse' ? 85 : (timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowBlur = previewFilter === 'pulse' ? 22 : 14; previewCtx.arc(point.x, point.y, index % 4 === 0 ? 4 : 2.7, 0, Math.PI * 2); previewCtx.fill(); });
   for (let index = 0; index < 12; index += 1) {
     const angle = timestamp * 0.001 + index * 0.52;
     const radius = scale * (1.12 + (index % 3) * 0.08);
     const particleX = cx + Math.cos(angle) * radius;
     const particleY = cy + Math.sin(angle) * radius * 0.72;
     previewCtx.globalAlpha = 0.25 + (Math.sin(angle * 1.7) + 1) * 0.2;
-    previewCtx.fillStyle = `hsl(${(timestamp * .04 + index * 32) % 360} 100% 70%)`;
+    previewCtx.fillStyle = `hsl(${previewFilter === 'matrix' ? 145 : previewFilter === 'pulse' ? 85 : (timestamp * .04 + index * 32) % 360} 100% 70%)`;
     previewCtx.beginPath(); previewCtx.arc(particleX, particleY, index % 3 === 0 ? 2.4 : 1.2, 0, Math.PI * 2); previewCtx.fill();
   }
   previewCtx.globalAlpha = 1;
@@ -94,6 +105,13 @@ previewToggle?.addEventListener('click', () => {
   previewToggle.setAttribute('aria-label', `${previewPaused ? 'Play' : 'Pause'} Camera Studio preview`);
   if (previewStatus) previewStatus.textContent = previewPaused ? 'PREVIEW PAUSED · TAP TO PLAY' : 'LIVE PREVIEW · TAP TO PAUSE';
   if (!previewPaused) requestAnimationFrame(drawPreview);
+});
+
+document.querySelectorAll('[data-preview-filter]').forEach((button) => {
+  button.addEventListener('click', () => {
+    previewFilter = button.dataset.previewFilter;
+    document.querySelectorAll('[data-preview-filter]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+  });
 });
 
 const contactForm = document.getElementById('contact-form');

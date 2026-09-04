@@ -100,3 +100,13 @@ test('preview and form include performance and feedback safeguards', () => {
   assert.match(source, /is-sent/);
   assert.match(html, /id="contact-submit"/);
 });
+
+test('Camera Studio preview has selectable visual filters', () => {
+  assert.match(html, /data-preview-filter="spectrum"/);
+  assert.match(html, /data-preview-filter="pulse"/);
+  assert.match(html, /data-preview-filter="matrix"/);
+  assert.match(source, /previewFilter/);
+  assert.match(source, /querySelectorAll\('\[data-preview-filter\]'\)/);
+  assert.match(source, /previewFilter === 'pulse'/);
+  assert.match(source, /previewFilter === 'matrix'/);
+});
