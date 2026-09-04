@@ -41,6 +41,7 @@ const previewCanvas = document.getElementById('preview-canvas');
 const previewToggle = document.getElementById('preview-toggle');
 const previewStatus = document.getElementById('preview-status');
 let previewPaused = false;
+let previewPointer = { x: 0, y: 0 };
 
 function drawPreview(timestamp = 0) {
   if (!previewCanvas) return;
@@ -52,8 +53,8 @@ function drawPreview(timestamp = 0) {
   previewCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   previewCtx.clearRect(0, 0, rect.width, rect.height);
   const scale = Math.min(rect.width, rect.height) * 0.36;
-  const cx = rect.width * 0.52 + Math.sin(timestamp * 0.0012) * rect.width * 0.025;
-  const cy = rect.height * 0.52;
+  const cx = rect.width * 0.52 + Math.sin(timestamp * 0.0012) * rect.width * 0.025 + previewPointer.x * 12;
+  const cy = rect.height * 0.52 + previewPointer.y * 8;
   const landmarks = [[0, .28], [-.24, .12], [-.38, -.08], [-.48, -.34], [-.54, -.57], [-.43, -.67], [-.32, -.39], [-.17, -.68], [-.06, -.9], [.05, -1.02], [.15, -.96], [.12, -.67], [.3, -.83], [.42, -.91], [.51, -.82], [.46, -.59], [.32, -.45], [.42, -.51], [.55, -.55], [.63, -.45], [.6, -.25]].map(([x, y], i) => ({ x: cx + x * scale, y: cy + y * scale + Math.sin(timestamp * .002 + i) * 2.5 }));
   const connections = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [8, 9], [0, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [0, 17], [17, 18], [18, 19], [19, 20], [0, 5]];
   previewCtx.globalCompositeOperation = 'lighter';
@@ -62,16 +63,42 @@ function drawPreview(timestamp = 0) {
     previewCtx.strokeStyle = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowColor = '#00e5ff'; previewCtx.shadowBlur = 12; previewCtx.lineWidth = 2.2; previewCtx.stroke();
   });
   landmarks.forEach((point, index) => { previewCtx.beginPath(); previewCtx.fillStyle = '#f6ffff'; previewCtx.shadowColor = `hsl(${(timestamp * .04 + index * 25) % 360} 100% 65%)`; previewCtx.shadowBlur = 14; previewCtx.arc(point.x, point.y, index % 4 === 0 ? 4 : 2.7, 0, Math.PI * 2); previewCtx.fill(); });
+  for (let index = 0; index < 12; index += 1) {
+    const angle = timestamp * 0.001 + index * 0.52;
+    const radius = scale * (1.12 + (index % 3) * 0.08);
+    const particleX = cx + Math.cos(angle) * radius;
+    const particleY = cy + Math.sin(angle) * radius * 0.72;
+    previewCtx.globalAlpha = 0.25 + (Math.sin(angle * 1.7) + 1) * 0.2;
+    previewCtx.fillStyle = `hsl(${(timestamp * .04 + index * 32) % 360} 100% 70%)`;
+    previewCtx.beginPath(); previewCtx.arc(particleX, particleY, index % 3 === 0 ? 2.4 : 1.2, 0, Math.PI * 2); previewCtx.fill();
+  }
+  previewCtx.globalAlpha = 1;
   if (!previewPaused) requestAnimationFrame(drawPreview);
 }
 
 if (previewCanvas) requestAnimationFrame(drawPreview);
+previewCanvas?.addEventListener('pointermove', (event) => {
+  const rect = previewCanvas.getBoundingClientRect();
+  previewPointer = { x: (event.clientX - rect.left) / rect.width - 0.5, y: (event.clientY - rect.top) / rect.height - 0.5 };
+});
+previewCanvas?.addEventListener('pointerleave', () => { previewPointer = { x: 0, y: 0 }; });
 previewToggle?.addEventListener('click', () => {
   previewPaused = !previewPaused;
   previewToggle.setAttribute('aria-pressed', String(!previewPaused));
   previewToggle.setAttribute('aria-label', `${previewPaused ? 'Play' : 'Pause'} Camera Studio preview`);
   if (previewStatus) previewStatus.textContent = previewPaused ? 'PREVIEW PAUSED · TAP TO PLAY' : 'LIVE PREVIEW · TAP TO PAUSE';
   if (!previewPaused) requestAnimationFrame(drawPreview);
+});
+
+const contactForm = document.getElementById('contact-form');
+contactForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const formData = new FormData(contactForm);
+  const subject = `${formData.get('service')} inquiry from ${formData.get('name')}`;
+  const body = `Name: ${formData.get('name')}\nEmail: ${formData.get('email')}\nService: ${formData.get('service')}\n\n${formData.get('message')}`;
+  window.location.href = `mailto:lakmalsujith25@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const status = document.getElementById('contact-form-status');
+  if (status) status.textContent = 'Opening your email app…';
 });
 
 function renderProfile() {

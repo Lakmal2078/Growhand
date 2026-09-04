@@ -82,3 +82,12 @@ test('Camera Studio preview is interactive and GitHub is in contact links', () =
   assert.match(html, /href="https:\/\/github\.com\/Lakmal2078"[^>]*>GitHub/);
   assert.doesNotMatch(html.match(/<nav[\s\S]*?<\/nav>/)?.[0] || '', /GitHub|Portfolio/);
 });
+
+test('contact form prepares an email inquiry without a backend', () => {
+  assert.match(html, /id="contact-form"/);
+  assert.match(html, /name="email"/);
+  assert.match(html, /name="message"/);
+  assert.match(source, /mailto:lakmalsujith25@gmail\.com/);
+  assert.match(source, /encodeURIComponent/);
+  assert.match(source, /pointermove/);
+});
