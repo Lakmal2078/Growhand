@@ -42,13 +42,18 @@ const previewToggle = document.getElementById('preview-toggle');
 const previewStatus = document.getElementById('preview-status');
 let previewPaused = false;
 let previewPointer = { x: 0, y: 0 };
+let previewSize = { width: 0, height: 0, dpr: 0 };
 
 function drawPreview(timestamp = 0) {
   if (!previewCanvas) return;
+  if (document.hidden) return;
   const rect = previewCanvas.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  previewCanvas.width = Math.round(rect.width * dpr);
-  previewCanvas.height = Math.round(rect.height * dpr);
+  if (previewSize.width !== rect.width || previewSize.height !== rect.height || previewSize.dpr !== dpr) {
+    previewCanvas.width = Math.round(rect.width * dpr);
+    previewCanvas.height = Math.round(rect.height * dpr);
+    previewSize = { width: rect.width, height: rect.height, dpr };
+  }
   const previewCtx = previewCanvas.getContext('2d');
   previewCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   previewCtx.clearRect(0, 0, rect.width, rect.height);
@@ -77,6 +82,7 @@ function drawPreview(timestamp = 0) {
 }
 
 if (previewCanvas) requestAnimationFrame(drawPreview);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !previewPaused) requestAnimationFrame(drawPreview); });
 previewCanvas?.addEventListener('pointermove', (event) => {
   const rect = previewCanvas.getBoundingClientRect();
   previewPointer = { x: (event.clientX - rect.left) / rect.width - 0.5, y: (event.clientY - rect.top) / rect.height - 0.5 };
@@ -93,12 +99,20 @@ previewToggle?.addEventListener('click', () => {
 const contactForm = document.getElementById('contact-form');
 contactForm?.addEventListener('submit', (event) => {
   event.preventDefault();
+  const submitButton = document.getElementById('contact-submit');
   const formData = new FormData(contactForm);
   const subject = `${formData.get('service')} inquiry from ${formData.get('name')}`;
   const body = `Name: ${formData.get('name')}\nEmail: ${formData.get('email')}\nService: ${formData.get('service')}\n\n${formData.get('message')}`;
   window.location.href = `mailto:lakmalsujith25@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   const status = document.getElementById('contact-form-status');
+  submitButton?.classList.add('is-sending');
+  if (submitButton) submitButton.disabled = true;
   if (status) status.textContent = 'Opening your email app…';
+  window.setTimeout(() => {
+    submitButton?.classList.remove('is-sending');
+    submitButton?.classList.add('is-sent');
+    if (status) status.textContent = 'Inquiry ready — complete the email to send it.';
+  }, 700);
 });
 
 function renderProfile() {

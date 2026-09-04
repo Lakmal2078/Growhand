@@ -160,6 +160,15 @@ h1 span { color: transparent; background: linear-gradient(100deg, #a9ff56 8%, #0
 .contact-form input, .contact-form select, .contact-form textarea { background: rgba(2, 10, 17, 0.58); border: 1px solid rgba(147, 177, 185, 0.2); border-radius: 8px; color: #e9f8f8; font: inherit; font-size: 0.72rem; padding: 0.7rem; resize: vertical; }
 .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { border-color: #a9ff56; outline: 2px solid rgba(169, 255, 86, 0.2); }
 .contact-form .primary-action { border: 0; cursor: pointer; min-height: 44px; }
+.contact-form .primary-action.is-sending { animation: submit-pulse 900ms ease-in-out infinite; cursor: wait; opacity: 0.82; }
+.contact-form .primary-action.is-sending .submit-label { animation: submit-blink 800ms ease-in-out infinite; }
+.contact-form .primary-action.is-sent { background: #72d8a0; }
+.submit-check { display: none; }
+.is-sent .submit-label, .is-sent .arrow { display: none; }
+.is-sent .submit-check { display: inline; animation: submit-pop 420ms ease both; }
+@keyframes submit-pulse { 50% { box-shadow: 0 0 28px rgba(169, 255, 86, 0.55); transform: translateY(-2px); } }
+@keyframes submit-blink { 50% { opacity: 0.38; } }
+@keyframes submit-pop { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
 .form-status { color: #a9ff56; font-family: 'DM Mono', monospace; font-size: 0.6rem; margin: 0; min-height: 1em; }
 .contact-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
 .contact-links-label { color: #71878f; font-family: 'DM Mono', monospace; font-size: 0.58rem; width: 100%; }

@@ -91,3 +91,12 @@ test('contact form prepares an email inquiry without a backend', () => {
   assert.match(source, /encodeURIComponent/);
   assert.match(source, /pointermove/);
 });
+
+test('preview and form include performance and feedback safeguards', () => {
+  assert.match(source, /document\.hidden/);
+  assert.match(source, /previewSize/);
+  assert.match(source, /visibilitychange/);
+  assert.match(source, /is-sending/);
+  assert.match(source, /is-sent/);
+  assert.match(html, /id="contact-submit"/);
+});
