@@ -23,7 +23,7 @@ GitHub Actions runs the sync once per day and can also be started manually from 
 
 ## Portfolio sections
 
-The landing page includes a services overview, three manually curated featured projects, a live list of public GitHub repositories, and contact links for email, WhatsApp, and LinkedIn. The repository list is loaded in the browser from the public GitHub API and falls back to a helpful message when the API is rate-limited or unavailable. Featured project copy and contact destinations live in `index.html`, making them straightforward to review and change.
+The landing page includes a services overview, a short Camera Studio explainer, and contact links for email, WhatsApp, and LinkedIn. The explainer tells visitors that camera frames stay in the browser while Growhand renders the real-time rainbow hand-tracking experience. Contact destinations live in `index.html`, making them straightforward to review and change.
 
 ## Chrome camera troubleshooting
 

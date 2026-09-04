@@ -60,35 +60,6 @@ function renderProfile() {
 
 renderProfile();
 
-async function loadGitHubProjects() {
-  const grid = document.getElementById('github-project-grid');
-  if (!grid) return;
-  try {
-    const response = await fetch('https://api.github.com/users/Lakmal2078/repos?sort=updated&per_page=8', { headers: { Accept: 'application/vnd.github+json' } });
-    if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
-    const repositories = (await response.json()).filter((repo) => !repo.fork).slice(0, 6);
-    if (!repositories.length) throw new Error('No public repositories found');
-    grid.replaceChildren(...repositories.map((repo, index) => {
-      const card = document.createElement('article');
-      card.className = 'project-card';
-      card.innerHTML = `<div class="project-meta"><span>REPOSITORY / ${String(index + 1).padStart(2, '0')}</span><span>${repo.language || 'OPEN SOURCE'}</span></div><h3></h3><p></p><div class="project-tags"><span>${repo.stargazers_count} ★</span><span>${repo.forks_count} FORKS</span></div><a target="_blank" rel="noreferrer">View on GitHub <span>↗</span></a>`;
-      card.querySelector('h3').textContent = repo.name;
-      card.querySelector('p').textContent = repo.description || 'An open-source experiment from the Growhand workspace.';
-      card.querySelector('a').href = repo.html_url;
-      return card;
-    }));
-  } catch (error) {
-    grid.replaceChildren();
-    const message = document.createElement('p');
-    message.className = 'loading-copy';
-    message.textContent = 'GitHub projects are unavailable right now. Explore all repositories ↗';
-    grid.append(message);
-    console.warn('Could not load GitHub repositories', error);
-  }
-}
-
-loadGitHubProjects();
-
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8],
   [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16],

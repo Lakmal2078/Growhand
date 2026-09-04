@@ -85,6 +85,10 @@ h1 span { color: transparent; background: linear-gradient(100deg, #a9ff56 8%, #0
 .secondary-action:hover { border-color: rgba(169, 255, 86, 0.6); color: #a9ff56; }
 .landing-status { color: #6f838d; font-family: 'DM Mono', monospace; font-size: 0.66rem; letter-spacing: 0.03em; margin-top: 0.9rem; min-height: 1.2rem; }
 .landing-status[data-state='error'] { color: #ff9dbf; max-width: 600px; }
+.camera-intro { align-items: flex-start; background: rgba(9, 22, 31, 0.58); border-left: 2px solid #a9ff56; border-radius: 0 12px 12px 0; display: flex; gap: 0.75rem; margin-top: 1.5rem; max-width: 590px; padding: 0.8rem 1rem; }
+.camera-intro-mark { color: #a9ff56; font-size: 1rem; line-height: 1.25; }
+.camera-intro strong { color: #cfe3e4; display: block; font-size: 0.72rem; letter-spacing: 0.02em; }
+.camera-intro p { color: #81969d; font-size: 0.68rem; line-height: 1.65; margin: 0.3rem 0 0; }
 
 .profile-card { background: linear-gradient(145deg, rgba(20, 36, 44, 0.82), rgba(8, 15, 22, 0.92)); border: 1px solid rgba(169, 255, 86, 0.34); border-radius: 24px; box-shadow: 0 25px 90px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.08), 0 0 55px rgba(0, 229, 255, 0.07); overflow: hidden; padding: 1.25rem; position: relative; transform: rotate(2.5deg); }
 .profile-card::before { background: linear-gradient(90deg, transparent, rgba(169, 255, 86, 0.75), transparent); content: ''; height: 1px; left: 13%; position: absolute; right: 13%; top: 0; }
@@ -192,6 +196,9 @@ html[data-theme='light'] #container::before { background: radial-gradient(circle
 html[data-theme='light'] #container::after { background: linear-gradient(120deg, rgba(236, 248, 245, 0.2), transparent 45%, rgba(220, 239, 235, 0.3)), linear-gradient(180deg, rgba(255,255,255,0.28), transparent 18%, transparent 78%, rgba(180, 205, 198, 0.28)); }
 html[data-theme='light'] h1, html[data-theme='light'] .section-heading h2, html[data-theme='light'] .contact-copy h2 { color: #10242c; }
 html[data-theme='light'] .hero-lede strong, html[data-theme='light'] .profile-card h2 { color: #10242c; }
+html[data-theme='light'] .camera-intro { background: rgba(255, 255, 255, 0.68); }
+html[data-theme='light'] .camera-intro strong { color: #183f47; }
+html[data-theme='light'] .camera-intro p { color: #567078; }
 html[data-theme='light'] .hero-lede, html[data-theme='light'] .section-heading p, html[data-theme='light'] .contact-copy p { color: #526b72; }
 html[data-theme='light'] .hero-sinhala, html[data-theme='light'] .landing-status { color: #627b80; }
 html[data-theme='light'] .top-links a, html[data-theme='light'] .profile-card-top, html[data-theme='light'] .profile-footer { color: #587176; }
