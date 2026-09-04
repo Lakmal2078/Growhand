@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Growhand</title>
+  <desc id="desc">Stylized glowing hand mark</desc>
+  <rect width="64" height="64" rx="16" fill="#05050a"/>
+  <path d="M20 35V18a4 4 0 0 1 8 0v12V13a4 4 0 0 1 8 0v17V15a4 4 0 0 1 8 0v18l3-7a4 4 0 0 1 7 3l-7 18a10 10 0 0 1-9 6H30a10 10 0 0 1-10-10v-8Z" fill="none" stroke="#66f6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="47" cy="13" r="3" fill="#ff4fd8"/>
+</svg>
