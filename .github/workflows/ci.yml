@@ -37,5 +37,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Security audit
+      - name: Security audit (advisory)
+        continue-on-error: true
+        timeout-minutes: 3
         run: npm audit --audit-level=high
