@@ -34,16 +34,17 @@ export function createCameraController({ videoEl, cameraToggle, cameraLaunch, re
     setStatus(modelReady() ? 'Camera stopped' : 'Loading hand tracker…');
   }
 
-  async function processVideoFrame(timestamp = performance.now()) {
-    if (!getCameraActive() || !getHands()) return;
-    if (timestamp - lastProcessTime < PERFORMANCE.processInterval) {
-      frameRequest = requestAnimationFrame(processVideoFrame);
-      return;
-    }
-    lastProcessTime = timestamp;
-    try {
-      await getHands().send({ image: videoEl });
-    } catch (error) {
+async function processVideoFrame(timestamp = performance.now()) {
+  if (!getCameraActive() || !getHands()) return;
+  if (timestamp - lastProcessTime < PERFORMANCE.processInterval) {
+    frameRequest = requestAnimationFrame(processVideoFrame);
+    return;
+  }
+  lastProcessTime = timestamp;
+  try {
+    const hands = getHands();
+    await hands.send({ image: videoEl });  // hands.send is now explicit
+  } catch (error) {
       stopCamera();
       retryButton.hidden = false;
       setStatus('Hand tracking stopped unexpectedly. Retry to continue.', true);
