@@ -1,4 +1,5 @@
 import './style.css';
+import { profile } from './profile-data.js';
 
 const videoEl = document.getElementById('video');
 const canvasEl = document.getElementById('overlay');
@@ -9,6 +10,29 @@ const retryButton = document.getElementById('retry-button');
 const cameraLaunch = document.getElementById('camera-launch');
 const landingEl = document.getElementById('landing');
 const landingStatusEl = document.getElementById('landing-status');
+
+function renderProfile() {
+  document.querySelectorAll('[data-profile="name"]').forEach((element) => { element.textContent = profile.name; });
+  document.querySelectorAll('[data-profile="bio"]').forEach((element) => { element.textContent = profile.bio; });
+  document.querySelectorAll('[data-profile="sinhalaBio"]').forEach((element) => { element.textContent = profile.sinhalaBio; });
+  document.querySelectorAll('[data-profile="role"]').forEach((element) => { element.textContent = profile.role; });
+  const tagsEl = document.querySelector('[data-profile-list="tags"]');
+  if (tagsEl) tagsEl.replaceChildren(...profile.tags.map((tag) => {
+    const element = document.createElement('span');
+    element.textContent = tag;
+    return element;
+  }));
+  profile.focus.forEach((item, index) => {
+    const title = document.querySelector(`[data-profile-focus="${index}-title"]`);
+    const detail = document.querySelector(`[data-profile-focus="${index}-detail"]`);
+    if (title) title.textContent = item.title;
+    if (detail) detail.textContent = item.detail;
+  });
+  const syncedAt = document.querySelector('[data-profile="syncedAt"]');
+  if (syncedAt && profile.syncedAt) syncedAt.textContent = `SYNCED · ${new Date(profile.syncedAt).toLocaleDateString('en-GB')}`;
+}
+
+renderProfile();
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8],

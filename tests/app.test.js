@@ -4,6 +4,9 @@ import { readFile } from 'node:fs/promises';
 
 const source = await readFile(new URL('../src/main.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const profileData = await readFile(new URL('../src/profile-data.js', import.meta.url), 'utf8');
+const syncScript = await readFile(new URL('../scripts/sync-profile.mjs', import.meta.url), 'utf8');
+const syncWorkflow = await readFile(new URL('../.github/workflows/sync-profile.yml', import.meta.url), 'utf8');
 
 test('camera lifecycle controls are wired', () => {
   assert.match(source, /import ['"]\.\/style\.css['"]/);
@@ -51,4 +54,14 @@ test('development server allows same-origin camera access', async () => {
   const viteConfig = await readFile(new URL('../vite.config.js', import.meta.url), 'utf8');
   assert.match(viteConfig, /Permissions-Policy/);
   assert.match(viteConfig, /camera=\(self\)/);
+});
+
+test('GitHub profile README is the website profile source of truth', () => {
+  assert.match(source, /profile-data\.js/);
+  assert.match(html, /data-profile="name"/);
+  assert.match(profileData, /export const profile/);
+  assert.match(syncScript, /raw\.githubusercontent\.com/);
+  assert.match(syncScript, /writeFile/);
+  assert.match(syncWorkflow, /workflow_dispatch/);
+  assert.match(syncWorkflow, /cron:/);
 });

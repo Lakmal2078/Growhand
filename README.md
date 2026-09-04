@@ -15,6 +15,12 @@ npm run dev
 
 Open the local URL printed by Vite, typically `http://localhost:5173`—do not use the network IP over plain HTTP because Chrome treats it as an insecure context. Select **Start camera** and allow webcam access. Select **Stop camera** to release the camera and clear the overlay. If the MediaPipe model or camera fails to load, resolve the network or permission issue and select **Retry**.
 
+## GitHub profile sync
+
+The public profile README at [Lakmal2078/Lakmal2078](https://github.com/Lakmal2078/Lakmal2078) is the source of truth for the landing-page profile copy. The `scripts/sync-profile.mjs` script fetches that README, extracts the supported profile sections, and writes the generated `src/profile-data.js` module. The frontend renders that module at build time, while the fallback values keep the page usable if the README is temporarily unavailable.
+
+GitHub Actions runs the sync once per day and can also be started manually from **Actions → Sync GitHub profile → Run workflow**. If the profile README changes, the action commits the generated data to this repository; the normal website deployment then rebuilds with the new details. To test or apply a sync locally, run `npm run sync:profile`, review `src/profile-data.js`, then run `npm run lint`, `npm test`, and `npm run build`.
+
 ## Chrome camera troubleshooting
 
 The development and preview servers send `Permissions-Policy: camera=(self)` so the page can request its own camera. If Chrome previously blocked access, select the lock icon beside the address, open **Site settings**, set **Camera** to **Allow**, reload the page, and select **Retry**. For a deployed build, serve the site over HTTPS and preserve an equivalent camera permission policy at the hosting layer.

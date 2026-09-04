@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "sync:profile": "node scripts/sync-profile.mjs",
     "lint": "node scripts/lint.mjs",
     "test": "node --test"
   },
