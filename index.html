@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary Meta Tags -->
-  <title>Glowing Hand Tracker — Real-Time Webcam Hand Tracking with Neon Effects</title>
-  <meta name="title" content="Glowing Hand Tracker — Real-Time Webcam Hand Tracking with Neon Effects" />
-  <meta name="description" content="Free real-time hand tracking web app. Turn on your webcam and watch your hands light up with glowing neon skeleton overlays powered by Google MediaPipe. No download, no sign-up — runs entirely in your browser." />
+  <title>Lakmal Vidana Gamage — Growhand Digital Studio</title>
+  <meta name="title" content="Lakmal Vidana Gamage — Growhand Digital Studio" />
+  <meta name="description" content="Growhand is Lakmal Vidana Gamage's digital studio for fast, secure and reliable Android, web, backend and automation projects, with an interactive neon hand-tracking camera experience." />
   <meta name="keywords" content="hand tracking, mediapipe hands, webcam hand tracking, real-time hand detection, neon hand effects, gesture recognition, computer vision, augmented reality hands, browser hand tracking" />
   <meta name="author" content="Glowing Hand Tracker" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -128,6 +128,60 @@
 </head>
 <body>
   <div id="container">
+    <section id="landing" aria-labelledby="landing-title">
+      <nav class="topbar" aria-label="Primary navigation">
+        <a class="brand" href="#landing" aria-label="Growhand home">
+          <span class="brand-mark">G</span>
+          <span>GROWHAND</span>
+        </a>
+        <div class="top-links">
+          <a href="https://github.com/Lakmal2078" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/lakmal-vidanagamage" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://lakmal2078.github.io/gamagemarketing/" target="_blank" rel="noreferrer">Portfolio</a>
+        </div>
+      </nav>
+
+      <div class="landing-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot"></span> SRI LANKAN DEVELOPER · DIGITAL BUILDER</div>
+          <h1 id="landing-title">Build with purpose.<br /><span>Move with light.</span></h1>
+          <p class="hero-lede">Hello, I'm <strong>Lakmal Vidana Gamage</strong> — a developer from Sri Lanka building fast, secure, reliable and user-focused digital products.</p>
+          <p class="hero-sinhala">ඇත්ත ගැටලු සඳහා සරල, ලස්සන සහ ප්‍රයෝජනවත් digital solutions නිර්මාණය කරමු.</p>
+          <div class="hero-actions">
+            <button id="camera-launch" class="primary-action" type="button" disabled>
+              <span class="camera-icon" aria-hidden="true">◉</span>
+              Open Camera Studio
+              <span class="arrow" aria-hidden="true">↗</span>
+            </button>
+            <a class="secondary-action" href="https://github.com/Lakmal2078" target="_blank" rel="noreferrer">Explore my work <span aria-hidden="true">→</span></a>
+          </div>
+          <div id="landing-status" class="landing-status" aria-live="polite">Loading camera studio…</div>
+        </div>
+
+        <div class="profile-card" aria-label="Lakmal Vidana Gamage profile">
+          <div class="profile-orbit orbit-one"></div>
+          <div class="profile-orbit orbit-two"></div>
+          <div class="profile-card-top"><span>PROFILE / 001</span><span>LK · 2026</span></div>
+          <div class="avatar-wrap">
+            <img src="https://github.com/Lakmal2078.png?size=256" alt="Lakmal Vidana Gamage" />
+            <span class="online-indicator" title="Available for digital work"></span>
+          </div>
+          <h2>Lakmal Vidana Gamage</h2>
+          <p>Android · Web · Backend Developer</p>
+          <div class="profile-rule"></div>
+          <div class="profile-tags"><span>KOTLIN</span><span>REACT</span><span>PYTHON</span><span>FIREBASE</span></div>
+          <div class="profile-footer"><span>FAST · SECURE · RELIABLE</span><span>🇱🇰</span></div>
+        </div>
+      </div>
+
+      <div class="focus-strip" aria-label="Development focus">
+        <div><span class="strip-index">01</span><strong>Android Apps</strong><small>Mobile experiences</small></div>
+        <div><span class="strip-index">02</span><strong>Modern Web</strong><small>Clean interfaces</small></div>
+        <div><span class="strip-index">03</span><strong>Backend & APIs</strong><small>Reliable systems</small></div>
+        <div><span class="strip-index">04</span><strong>Automation</strong><small>Smarter workflows</small></div>
+      </div>
+    </section>
+
     <video id="video" autoplay playsinline muted></video>
     <canvas id="overlay"></canvas>
     <div class="hud" aria-live="polite">

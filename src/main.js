@@ -6,6 +6,9 @@ const ctx = canvasEl.getContext('2d', { alpha: true });
 const statusEl = document.getElementById('status');
 const cameraToggle = document.getElementById('camera-toggle');
 const retryButton = document.getElementById('retry-button');
+const cameraLaunch = document.getElementById('camera-launch');
+const landingEl = document.getElementById('landing');
+const landingStatusEl = document.getElementById('landing-status');
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8],
@@ -41,6 +44,8 @@ let modelReady = false;
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
   statusEl.dataset.state = isError ? 'error' : 'normal';
+  if (landingStatusEl) landingStatusEl.textContent = message;
+  if (landingStatusEl) landingStatusEl.dataset.state = isError ? 'error' : 'normal';
 }
 
 function resizeCanvas() {
@@ -281,6 +286,7 @@ function friendlyCameraError(error) {
 
 function stopCamera() {
   cameraActive = false;
+  landingEl.classList.remove('is-live', 'is-starting');
   if (frameRequest) cancelAnimationFrame(frameRequest);
   frameRequest = 0;
   videoEl.srcObject?.getTracks().forEach((track) => track.stop());
@@ -357,7 +363,9 @@ async function requestCameraStream() {
 async function startCamera() {
   if (!modelReady || cameraActive) return;
   cameraToggle.disabled = true;
+  cameraLaunch.disabled = true;
   retryButton.hidden = true;
+  landingEl.classList.add('is-starting');
   setStatus('Requesting camera permission…');
   let stream;
   try {
@@ -368,6 +376,8 @@ async function startCamera() {
     await waitForVideoMetadata();
     await videoEl.play();
     cameraActive = true;
+    landingEl.classList.remove('is-starting');
+    landingEl.classList.add('is-live');
     cameraToggle.textContent = 'Stop camera';
     setStatus('Camera started — show your hands!');
     frameRequest = requestAnimationFrame(processVideoFrame);
@@ -375,12 +385,14 @@ async function startCamera() {
     stream?.getTracks().forEach((track) => track.stop());
     videoEl.srcObject = null;
     cameraActive = false;
+    landingEl.classList.remove('is-live', 'is-starting');
     retryButton.hidden = false;
     const errorName = error?.name ? ` [${error.name}]` : '';
     setStatus(`${friendlyCameraError(error)}${errorName}`, true);
     console.error(error);
   } finally {
     cameraToggle.disabled = false;
+    cameraLaunch.disabled = false;
   }
 }
 
@@ -403,16 +415,19 @@ async function loadModel() {
   hands.onResults(onResults);
   modelReady = true;
   cameraToggle.disabled = false;
+  cameraLaunch.disabled = false;
   setStatus('Ready — start the camera when you are ready.');
 }
 
 cameraToggle.addEventListener('click', () => (cameraActive ? stopCamera() : startCamera()));
+cameraLaunch.addEventListener('click', () => (cameraActive ? stopCamera() : startCamera()));
 retryButton.addEventListener('click', startCamera);
 window.addEventListener('beforeunload', stopCamera);
 
 loadModel().catch((error) => {
   modelReady = false;
   cameraToggle.disabled = true;
+  cameraLaunch.disabled = true;
   retryButton.hidden = false;
   setStatus('The hand tracking model could not load. Check your connection and retry.', true);
   retryButton.addEventListener('click', () => window.location.reload(), { once: true });

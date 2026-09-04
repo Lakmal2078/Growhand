@@ -16,6 +16,9 @@ test('camera lifecycle controls are wired', () => {
   assert.match(source, /hands\.send\(\{ image: videoEl \}\)/);
   assert.match(source, /requestAnimationFrame\(processVideoFrame\)/);
   assert.match(html, /id="camera-toggle"/);
+  assert.match(html, /id="camera-launch"/);
+  assert.match(html, /Lakmal Vidana Gamage/);
+  assert.match(html, /id="landing"/);
   assert.match(html, /id="retry-button"/);
 });
 
