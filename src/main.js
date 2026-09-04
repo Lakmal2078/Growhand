@@ -17,7 +17,7 @@ const HAND_OFFSETS = { Left: 0, Right: 155 };
 const isMobileDevice = window.matchMedia('(max-width: 700px)').matches || navigator.maxTouchPoints > 1;
 const isLowPowerDevice = isMobileDevice && (navigator.hardwareConcurrency || 4) <= 6;
 const PERFORMANCE = isLowPowerDevice
-  ? { cameraWidth: 640, cameraHeight: 480, maxNumHands: 1, modelComplexity: 0, processInterval: 1000 / 18, trailLength: 4, particleLimit: 72, pixelRatio: 1 }
+  ? { cameraWidth: 480, cameraHeight: 360, maxNumHands: 1, modelComplexity: 0, processInterval: 1000 / 12, trailLength: 2, particleLimit: 24, pixelRatio: 1 }
   : isMobileDevice
     ? { cameraWidth: 960, cameraHeight: 540, maxNumHands: 2, modelComplexity: 0, processInterval: 1000 / 24, trailLength: 5, particleLimit: 120, pixelRatio: 1.25 }
     : { cameraWidth: 1280, cameraHeight: 720, maxNumHands: 2, modelComplexity: 1, processInterval: 1000 / 30, trailLength: 7, particleLimit: 240, pixelRatio: 2 };
@@ -147,8 +147,10 @@ function drawRainbowConnections(points, time, handOffset) {
     gradient.addColorStop(0, colorA);
     gradient.addColorStop(0.5, colorB);
     gradient.addColorStop(1, rainbowColor(connectionIndex + 4, time + 900, handOffset));
-    const glowLayers = isMobileDevice
-      ? [{ width: 12, blur: 18, alpha: 0.16 }, { width: 5, blur: 8, alpha: 0.86 }]
+    const glowLayers = isLowPowerDevice
+      ? [{ width: 4, blur: 5, alpha: 0.92 }]
+      : isMobileDevice
+        ? [{ width: 12, blur: 18, alpha: 0.16 }, { width: 5, blur: 8, alpha: 0.86 }]
       : [{ width: 18, blur: 32, alpha: 0.12 }, { width: 9, blur: 18, alpha: 0.3 }, { width: 4, blur: 8, alpha: 0.9 }];
     for (const layer of glowLayers) {
       ctx.beginPath();
@@ -181,28 +183,31 @@ function drawRainbowJoints(points, time, handOffset) {
   points.forEach((p, index) => {
     const color = rainbowColor(index, time, handOffset);
     const radius = [0, 4, 8, 12, 16, 20].includes(index) ? 5.4 : 3.6;
-    const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 25 * pulse);
-    halo.addColorStop(0, rainbowColor(index, time, handOffset, 0.95));
-    halo.addColorStop(0.22, rainbowColor(index + 2, time, handOffset, 0.72));
-    halo.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = halo;
-    ctx.globalAlpha = 0.78;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 25 * pulse, 0, Math.PI * 2);
-    ctx.fill();
+    if (!isLowPowerDevice) {
+      const halo = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 25 * pulse);
+      halo.addColorStop(0, rainbowColor(index, time, handOffset, 0.95));
+      halo.addColorStop(0.22, rainbowColor(index + 2, time, handOffset, 0.72));
+      halo.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = halo;
+      ctx.globalAlpha = 0.78;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 25 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = color;
-      ctx.shadowBlur = isMobileDevice ? 8 : 16;
+      ctx.shadowBlur = isLowPowerDevice ? 3 : isMobileDevice ? 8 : 16;
     ctx.globalAlpha = 1;
     ctx.beginPath();
     ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
     ctx.fill();
-    if (index === 8 || index === 4) addParticle(p, color);
+    if (!isLowPowerDevice && (index === 8 || index === 4)) addParticle(p, color);
   });
   ctx.restore();
 }
 
 function drawParticles(delta) {
+  if (isLowPowerDevice) return;
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   for (let i = particles.length - 1; i >= 0; i -= 1) {
