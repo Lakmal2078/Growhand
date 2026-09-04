@@ -1,3 +1,5 @@
+import './style.css';
+
 const videoEl = document.getElementById('video');
 const canvasEl = document.getElementById('overlay');
 const ctx = canvasEl.getContext('2d', { alpha: true });

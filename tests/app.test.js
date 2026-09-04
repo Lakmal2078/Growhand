@@ -6,6 +6,7 @@ const source = await readFile(new URL('../src/main.js', import.meta.url), 'utf8'
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
 test('camera lifecycle controls are wired', () => {
+  assert.match(source, /import ['"]\.\/style\.css['"]/);
   assert.match(source, /getUserMedia/);
   assert.match(source, /window\.isSecureContext/);
   assert.match(source, /waitForVideoMetadata/);
