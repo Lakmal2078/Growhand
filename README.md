@@ -13,7 +13,11 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite, typically `http://localhost:5173`. Select **Start camera** and allow webcam access. Select **Stop camera** to release the camera and clear the overlay. If the MediaPipe model or camera fails to load, resolve the network or permission issue and select **Retry**.
+Open the local URL printed by Vite, typically `http://localhost:5173`—do not use the network IP over plain HTTP because Chrome treats it as an insecure context. Select **Start camera** and allow webcam access. Select **Stop camera** to release the camera and clear the overlay. If the MediaPipe model or camera fails to load, resolve the network or permission issue and select **Retry**.
+
+## Chrome camera troubleshooting
+
+The development and preview servers send `Permissions-Policy: camera=(self)` so the page can request its own camera. If Chrome previously blocked access, select the lock icon beside the address, open **Site settings**, set **Camera** to **Allow**, reload the page, and select **Retry**. For a deployed build, serve the site over HTTPS and preserve an equivalent camera permission policy at the hosting layer.
 
 ## Available commands
 

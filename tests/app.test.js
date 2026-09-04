@@ -7,6 +7,9 @@ const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 
 test('camera lifecycle controls are wired', () => {
   assert.match(source, /getUserMedia/);
+  assert.match(source, /window\.isSecureContext/);
+  assert.match(source, /waitForVideoMetadata/);
+  assert.match(source, /OverconstrainedError/);
   assert.match(source, /cameraActive \? stopCamera\(\) : startCamera\(\)/);
   assert.match(source, /beforeunload/);
   assert.match(source, /hands\.send\(\{ image: videoEl \}\)/);
@@ -29,7 +32,15 @@ test('particle growth is bounded', () => {
 });
 
 test('camera errors have user-facing recovery guidance', () => {
-  assert.match(source, /permission was denied/);
+  assert.match(source, /permission was denied or blocked/);
+  assert.match(source, /Camera access requires HTTPS or localhost/);
   assert.match(source, /No camera was found/);
+  assert.match(source, /Site settings/);
   assert.match(source, /retry-button/);
+});
+
+test('development server allows same-origin camera access', async () => {
+  const viteConfig = await readFile(new URL('../vite.config.js', import.meta.url), 'utf8');
+  assert.match(viteConfig, /Permissions-Policy/);
+  assert.match(viteConfig, /camera=\(self\)/);
 });

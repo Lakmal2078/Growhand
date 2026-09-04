@@ -246,10 +246,14 @@ function onResults(results) {
 }
 
 function friendlyCameraError(error) {
-  if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') return 'Camera permission was denied. Allow access and retry.';
+  if (!window.isSecureContext) return 'Camera access requires HTTPS or localhost. Open http://localhost:5173 in Chrome and retry.';
+  if (!navigator.mediaDevices?.getUserMedia) return 'This browser does not support camera access. Use the latest Chrome and retry.';
+  if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError') {
+    return 'Camera permission was denied or blocked for this site. In Chrome, select the lock icon → Site settings → Camera → Allow, then retry.';
+  }
   if (error?.name === 'NotFoundError') return 'No camera was found. Connect a camera and retry.';
   if (error?.name === 'NotReadableError') return 'The camera is busy in another app. Close it and retry.';
-  if (!window.isSecureContext) return 'Camera access requires HTTPS or localhost.';
+  if (error?.name === 'OverconstrainedError') return 'The selected camera settings are not supported. Retry with the default camera settings.';
   return 'Unable to start the camera. Check permissions and retry.';
 }
 
@@ -281,21 +285,68 @@ async function processVideoFrame() {
   if (cameraActive) frameRequest = requestAnimationFrame(processVideoFrame);
 }
 
+async function waitForVideoMetadata() {
+  if (videoEl.readyState >= HTMLMediaElement.HAVE_METADATA) return;
+  await new Promise((resolve, reject) => {
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error('Timed out while waiting for camera video metadata'));
+    }, 5000);
+    const cleanup = () => {
+      window.clearTimeout(timeout);
+      videoEl.removeEventListener('loadedmetadata', onLoadedMetadata);
+      videoEl.removeEventListener('error', onVideoError);
+    };
+    const onLoadedMetadata = () => {
+      cleanup();
+      resolve();
+    };
+    const onVideoError = () => {
+      cleanup();
+      reject(new Error('Camera video could not be loaded'));
+    };
+    videoEl.addEventListener('loadedmetadata', onLoadedMetadata, { once: true });
+    videoEl.addEventListener('error', onVideoError, { once: true });
+  });
+}
+
+async function requestCameraStream() {
+  const constraints = {
+    video: {
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+      facingMode: { ideal: 'user' }
+    },
+    audio: false
+  };
+  try {
+    return await navigator.mediaDevices.getUserMedia(constraints);
+  } catch (error) {
+    if (error?.name !== 'OverconstrainedError') throw error;
+    return navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+  }
+}
+
 async function startCamera() {
-  if (!modelReady) return;
+  if (!modelReady || cameraActive) return;
   cameraToggle.disabled = true;
   retryButton.hidden = true;
   setStatus('Requesting camera permission…');
+  let stream;
   try {
+    if (!window.isSecureContext) throw new Error('Insecure camera context');
     if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera API unavailable');
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, audio: false });
+    stream = await requestCameraStream();
     videoEl.srcObject = stream;
+    await waitForVideoMetadata();
     await videoEl.play();
     cameraActive = true;
     cameraToggle.textContent = 'Stop camera';
     setStatus('Camera started — show your hands!');
     frameRequest = requestAnimationFrame(processVideoFrame);
   } catch (error) {
+    stream?.getTracks().forEach((track) => track.stop());
+    videoEl.srcObject = null;
     cameraActive = false;
     retryButton.hidden = false;
     setStatus(friendlyCameraError(error), true);
