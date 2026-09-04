@@ -23,11 +23,12 @@ test('rainbow rendering and motion trails are wired', () => {
   assert.match(source, /rainbowColor/);
   assert.match(source, /createLinearGradient/);
   assert.match(source, /drawMotionTrails/);
-  assert.match(source, /TRAIL_LENGTH = 7/);
+  assert.match(source, /trailLength: 7/);
+  assert.match(source, /trailLength: 4/);
 });
 
 test('particle growth is bounded', () => {
-  assert.match(source, /MAX_PARTICLES = 240/);
+  assert.match(source, /particleLimit: 240/);
   assert.match(source, /particles\.length >= MAX_PARTICLES/);
   assert.match(source, /particles\.splice/);
 });

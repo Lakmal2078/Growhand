@@ -14,15 +14,24 @@ const HAND_CONNECTIONS = [
 ];
 
 const HAND_OFFSETS = { Left: 0, Right: 155 };
-const TRAIL_LENGTH = 7;
+const isMobileDevice = window.matchMedia('(max-width: 700px)').matches || navigator.maxTouchPoints > 1;
+const isLowPowerDevice = isMobileDevice && (navigator.hardwareConcurrency || 4) <= 6;
+const PERFORMANCE = isLowPowerDevice
+  ? { cameraWidth: 640, cameraHeight: 480, maxNumHands: 1, modelComplexity: 0, processInterval: 1000 / 18, trailLength: 4, particleLimit: 72, pixelRatio: 1 }
+  : isMobileDevice
+    ? { cameraWidth: 960, cameraHeight: 540, maxNumHands: 2, modelComplexity: 0, processInterval: 1000 / 24, trailLength: 5, particleLimit: 120, pixelRatio: 1.25 }
+    : { cameraWidth: 1280, cameraHeight: 720, maxNumHands: 2, modelComplexity: 1, processInterval: 1000 / 30, trailLength: 7, particleLimit: 240, pixelRatio: 2 };
+const TRAIL_LENGTH = PERFORMANCE.trailLength;
 const RAINBOW_SATURATION = 100;
 const RAINBOW_LIGHTNESS = 64;
 
-export const MAX_PARTICLES = 240;
+export const MAX_PARTICLES = PERFORMANCE.particleLimit;
 const smoothedHands = new Map();
 const trailHistory = new Map();
 const particles = [];
 let lastFrameTime = performance.now();
+let lastProcessTime = 0;
+let lastStatusTime = 0;
 let fps = 0;
 let hands;
 let cameraActive = false;
@@ -35,7 +44,7 @@ function setStatus(message, isError = false) {
 }
 
 function resizeCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, PERFORMANCE.pixelRatio);
   canvasEl.width = Math.round(window.innerWidth * dpr);
   canvasEl.height = Math.round(window.innerHeight * dpr);
   canvasEl.style.width = `${window.innerWidth}px`;
@@ -138,7 +147,10 @@ function drawRainbowConnections(points, time, handOffset) {
     gradient.addColorStop(0, colorA);
     gradient.addColorStop(0.5, colorB);
     gradient.addColorStop(1, rainbowColor(connectionIndex + 4, time + 900, handOffset));
-    for (const layer of [{ width: 18, blur: 32, alpha: 0.12 }, { width: 9, blur: 18, alpha: 0.3 }, { width: 4, blur: 8, alpha: 0.9 }]) {
+    const glowLayers = isMobileDevice
+      ? [{ width: 12, blur: 18, alpha: 0.16 }, { width: 5, blur: 8, alpha: 0.86 }]
+      : [{ width: 18, blur: 32, alpha: 0.12 }, { width: 9, blur: 18, alpha: 0.3 }, { width: 4, blur: 8, alpha: 0.9 }];
+    for (const layer of glowLayers) {
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
       ctx.lineTo(p2.x, p2.y);
@@ -180,7 +192,7 @@ function drawRainbowJoints(points, time, handOffset) {
     ctx.fill();
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = color;
-    ctx.shadowBlur = 16;
+      ctx.shadowBlur = isMobileDevice ? 8 : 16;
     ctx.globalAlpha = 1;
     ctx.beginPath();
     ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
@@ -228,7 +240,10 @@ function onResults(results) {
     setStatus('No hands detected');
     return;
   }
-  setStatus(`Tracking ${handsFound} hand${handsFound > 1 ? 's' : ''} · ${Math.round(fps)} FPS`);
+  if (now - lastStatusTime >= 500) {
+    setStatus(`Tracking ${handsFound} hand${handsFound > 1 ? 's' : ''} · ${Math.round(fps)} FPS`);
+    lastStatusTime = now;
+  }
   const activeLabels = new Set();
   results.multiHandLandmarks.forEach((landmarks, i) => {
     const label = results.multiHandedness?.[i]?.label || `Hand${i}`;
@@ -273,8 +288,13 @@ function stopCamera() {
   setStatus(modelReady ? 'Camera stopped' : 'Loading hand tracker…');
 }
 
-async function processVideoFrame() {
+async function processVideoFrame(timestamp = performance.now()) {
   if (!cameraActive || !hands) return;
+  if (timestamp - lastProcessTime < PERFORMANCE.processInterval) {
+    frameRequest = requestAnimationFrame(processVideoFrame);
+    return;
+  }
+  lastProcessTime = timestamp;
   try {
     await hands.send({ image: videoEl });
   } catch (error) {
@@ -315,8 +335,8 @@ async function waitForVideoMetadata() {
 async function requestCameraStream() {
   const constraints = {
     video: {
-      width: { ideal: 1280 },
-      height: { ideal: 720 },
+      width: { ideal: PERFORMANCE.cameraWidth },
+      height: { ideal: PERFORMANCE.cameraHeight },
       facingMode: { ideal: 'user' }
     },
     audio: false
@@ -374,7 +394,7 @@ async function loadModel() {
   await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js');
   await loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js');
   hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-  hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.68, minTrackingConfidence: 0.72 });
+  hands.setOptions({ maxNumHands: PERFORMANCE.maxNumHands, modelComplexity: PERFORMANCE.modelComplexity, minDetectionConfidence: 0.62, minTrackingConfidence: 0.68 });
   hands.onResults(onResults);
   modelReady = true;
   cameraToggle.disabled = false;

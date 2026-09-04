@@ -39,7 +39,7 @@ The webcam stream is requested with `getUserMedia` and is rendered locally. Grow
 
 ## Production notes
 
-Deploy the generated `dist/` directory behind HTTPS. Keep the MediaPipe CDN available, or vendor the model assets if the deployment requires a self-contained build. The renderer uses animated rainbow gradients, short landmark motion trails, and bright fingertip particles to create the reference-inspired effect. The visual particle buffer is capped at 240 particles to prevent unbounded growth during long sessions. Browser permission failures, missing cameras, busy cameras, insecure contexts, and model-load failures all produce recovery-oriented status messages.
+Deploy the generated `dist/` directory behind HTTPS. Keep the MediaPipe CDN available, or vendor the model assets if the deployment requires a self-contained build. The renderer uses animated rainbow gradients, short landmark motion trails, and bright fingertip particles to create the reference-inspired effect. The visual particle buffer is capped at 240 particles to prevent unbounded growth during long sessions. On touch devices, Growhand automatically switches to a mobile performance profile: 640–960px camera input, MediaPipe complexity 0, 18–24 tracking updates per second, lower canvas pixel density, shorter trails, fewer glow layers, and a smaller particle cap. This keeps the neon look while reducing heat, battery drain, and frame drops. Browser permission failures, missing cameras, busy cameras, insecure contexts, and model-load failures all produce recovery-oriented status messages.
 
 ## Validation
 
