@@ -65,3 +65,11 @@ test('GitHub profile README is the website profile source of truth', () => {
   assert.match(syncWorkflow, /workflow_dispatch/);
   assert.match(syncWorkflow, /cron:/);
 });
+
+test('dark and light themes are user-selectable and persisted', () => {
+  assert.match(html, /id="theme-toggle"/);
+  assert.match(source, /growhand-theme/);
+  assert.match(source, /prefers-color-scheme: light/);
+  assert.match(source, /aria-pressed/);
+  assert.match(source, /dataset\.theme/);
+});

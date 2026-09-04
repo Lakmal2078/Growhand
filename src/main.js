@@ -10,6 +10,32 @@ const retryButton = document.getElementById('retry-button');
 const cameraLaunch = document.getElementById('camera-launch');
 const landingEl = document.getElementById('landing');
 const landingStatusEl = document.getElementById('landing-status');
+const themeToggle = document.getElementById('theme-toggle');
+
+function getInitialTheme() {
+  try {
+    return localStorage.getItem('growhand-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  } catch {
+    return 'dark';
+  }
+}
+
+function setTheme(theme) {
+  const isLight = theme === 'light';
+  document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+  if (!themeToggle) return;
+  themeToggle.setAttribute('aria-pressed', String(isLight));
+  themeToggle.setAttribute('aria-label', `Switch to ${isLight ? 'dark' : 'light'} mode`);
+  themeToggle.querySelector('.theme-icon').textContent = isLight ? '☾' : '☼';
+  themeToggle.querySelector('.theme-label').textContent = isLight ? 'Dark mode' : 'Light mode';
+}
+
+setTheme(getInitialTheme());
+themeToggle?.addEventListener('click', () => {
+  const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  setTheme(nextTheme);
+  try { localStorage.setItem('growhand-theme', nextTheme); } catch { /* Storage can be disabled in private browsing. */ }
+});
 
 function renderProfile() {
   document.querySelectorAll('[data-profile="name"]').forEach((element) => { element.textContent = profile.name; });
