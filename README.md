@@ -21,6 +21,10 @@ The public profile README at [Lakmal2078/Lakmal2078](https://github.com/Lakmal20
 
 GitHub Actions runs the sync once per day and can also be started manually from **Actions → Sync GitHub profile → Run workflow**. If the profile README changes, the action commits the generated data to this repository; the normal website deployment then rebuilds with the new details. To test or apply a sync locally, run `npm run sync:profile`, review `src/profile-data.js`, then run `npm run lint`, `npm test`, and `npm run build`.
 
+## Portfolio sections
+
+The landing page includes a services overview, three manually curated featured projects, a live list of public GitHub repositories, and contact links for email, WhatsApp, and LinkedIn. The repository list is loaded in the browser from the public GitHub API and falls back to a helpful message when the API is rate-limited or unavailable. Featured project copy and contact destinations live in `index.html`, making them straightforward to review and change.
+
 ## Chrome camera troubleshooting
 
 The development and preview servers send `Permissions-Policy: camera=(self)` so the page can request its own camera. If Chrome previously blocked access, select the lock icon beside the address, open **Site settings**, set **Camera** to **Allow**, reload the page, and select **Retry**. For a deployed build, serve the site over HTTPS and preserve an equivalent camera permission policy at the hosting layer.
