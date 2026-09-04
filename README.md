@@ -3,7 +3,6 @@
 > A browser-first interactive portfolio experience with real-time MediaPipe hand tracking and a neon visual studio.
 
 [![CI](https://github.com/Lakmal2078/Growhand/actions/workflows/ci.yml/badge.svg)](https://github.com/Lakmal2078/Growhand/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Growhand combines a professional digital portfolio with an interactive Camera Studio. It uses Google MediaPipe Hands and the webcam to render a rainbow neon skeleton, motion trails, and fingertip particle effects. Camera processing is browser-first: the project does not require an application backend, database, account system, or camera-upload pipeline.
 
